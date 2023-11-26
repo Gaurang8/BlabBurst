@@ -1,0 +1,114 @@
+
+.registration-form{
+    width: fit-content;
+    margin: 0 auto;
+    max-width: 400px;
+    padding: 30px 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+.registration-form h1{
+    text-align: center;
+    margin-bottom: 20px;
+}
+.registration-form h1 img {
+    width: 70px;
+    height: 70px;
+    object-fit: none;
+}
+.registration-form h1 span{
+    height: 70px;
+
+}
+.registration-form .formInput{
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+}
+
+.registration-form input{
+    padding: 15px 15px;
+    margin: 10px 0px;
+    border-radius: 5px;
+    border: 2px solid rgb(75, 75, 255);
+}
+.registration-form input:focus{
+    outline: none;
+    border: 2px solid rgb(1, 1, 215);
+}
+
+.registration-form label{
+    font-size: 12px;
+    color: gray;
+}
+
+.registration-form span{
+    font-size: 12px;
+    padding: 3px;
+    color: red;
+    display: none;
+}
+
+.registration-form input:invalid[focused="true"]{
+    border: 1px solid red;
+}
+
+.registration-form input:invalid[focused="true"] ~ span{
+    display: block;
+}
+
+.registration-form .full-btn{
+    background-color: rgb(75, 75, 255);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 280px;
+    transition: all 0.3s ease;
+}
+.registration-form .half-secondary-btn{
+    background-color: white;
+    color: rgb(75, 75, 255);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    outline: 2px solid rgb(75, 75, 255);
+}
+.registration-form .half-primary-btn{
+    background-color: rgb(75, 75, 255);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 2px solid rgb(75, 75, 255);
+    margin-top: 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100px;
+    transition: all 0.3s ease;
+}
+.registration-form .bottom-text{
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+
+}
+.registration-form .bottom-text span{
+    display: initial !important;
+    color: blue;
+    cursor: pointer;
+    font-size: 14px;
+}
