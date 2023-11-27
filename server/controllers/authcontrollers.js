@@ -58,7 +58,10 @@ const {
       }
       const user = await User.findOne({ email : emailphone }) || await User.findOne({ phone_number : emailphone }) ;
   
-      const isPasswordValid = await comparePasswords(password, user.password);
+    let isPasswordValid;
+    if (user){
+       isPasswordValid = await comparePasswords(password, user.password);
+    }
   
       if(!user || !isPasswordValid) {
         return res.status(400).send("Invalid data");

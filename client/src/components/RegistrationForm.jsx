@@ -1,11 +1,13 @@
 import React, { useState , useContext } from "react";
+import { Link } from "react-router-dom";
 import FormInput from "./FormInput";
 import "./registration.css";
 import logoimg from "../svg/logo192.png";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { AuthContext } from "../AuthContext";
 
-const RegistrationForm = ({setLoginPage}) => {
+
+const RegistrationForm = () => {
 
   const [values, setValues] = useState({
     username: "",
@@ -166,7 +168,7 @@ const RegistrationForm = ({setLoginPage}) => {
             <button className="full-btn">Submit</button>
             <p className="bottom-text">
               Already have an account? 
-              <span onClick={() => setLoginPage(true)}> Login</span>
+              <Link to="/login" > <span > Login</span></Link>
             </p>
           </>
         ) : (
@@ -185,7 +187,7 @@ const RegistrationForm = ({setLoginPage}) => {
             </div>
             <p className="bottom-text">
               Already have an account? 
-              <span onClick={() => setLoginPage(true)}> Login</span>
+              <Link to="/login" > <span > Login</span></Link>
             </p>
 
           </>

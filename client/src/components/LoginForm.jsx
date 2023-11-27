@@ -1,19 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useState , useContext} from 'react'
 import FormInput from './FormInput'
 import logoimg from '../svg/logo192.png'
 import './registration.css'
 import { AuthContext } from '../AuthContext'
 
-const LoginForm = ({setLoginPage}) => {
+const LoginForm = () => {
     const [values, setValues] = useState({
         emailphone: "",
         password: "",
       });
 
     const {user , setUser} = useContext(AuthContext)
-
-
+    
+    useEffect(() => {
+      console.log(user);
+      if (user) {
+        window.location.href = "/home";
+      }
+    }
+    , [user])
 
     const inputs = [
         {
@@ -57,6 +64,7 @@ const LoginForm = ({setLoginPage}) => {
                 password: "",
                 });
                 setUser(data?.user)
+
             });
       }
 
@@ -65,6 +73,9 @@ const LoginForm = ({setLoginPage}) => {
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+
+
+
 
   return (
     <form className="registration-form" onSubmit={handleLogin}>
@@ -84,7 +95,7 @@ const LoginForm = ({setLoginPage}) => {
             <button className="full-btn">Submit</button>
             <p className="bottom-text">
               Don't have an account? 
-              <span onClick={()=>{setLoginPage(false)}}>Create One</span>
+              <Link to="/register" > <span >Create One</span></Link>
 
             </p>
     </form>
