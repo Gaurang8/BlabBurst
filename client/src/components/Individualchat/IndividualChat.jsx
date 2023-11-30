@@ -20,7 +20,7 @@ const IndividualChat = ({ conversationId }) => {
   const [userStatus, setUserStatus] = useState("offline");
 
   useEffect(() => {
-    socket.current = io(process.env.REACT_APP_SOCKET_ADDR);
+    socket.current = io("wss://socketchatweb.onrender.com");
 
     socket.current.on("getMessage", (data) => {
       setCommingMessage({
