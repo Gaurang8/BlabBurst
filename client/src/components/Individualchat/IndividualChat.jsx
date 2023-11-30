@@ -5,15 +5,19 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { AuthContext } from "../../AuthContext";
 import { io } from "socket.io-client";
+import { Link } from "react-router-dom";
 
-const IndividualChat = ({ conversationId }) => {
+const IndividualChat = ({
+  conversationId,
+  otherUserDetails,
+  otherUser,
+  currentConversation,
+  setInfoVisible,
+}) => {
   const { user, setUser } = useContext(AuthContext);
 
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const [currentConversation, setCurrentConversation] = useState(null);
-  const [otherUser, setOtherUser] = useState(null);
-  const [otherUserDetails, setOtherUserDetails] = useState(null);
   const [commingMessage, setCommingMessage] = useState(null);
   const socket = useRef();
   const scrollRef = useRef();
@@ -29,26 +33,22 @@ const IndividualChat = ({ conversationId }) => {
         createdAt: Date.now(),
       });
     });
-
-
-
-   
   }, []);
 
   useEffect(() => {
     console.log("Other User:", otherUser);
     socket.current.on("getOnlineuser", (onlineUsers) => {
-        console.log("Online Users:", onlineUsers);
-        console.log("Other User:", otherUser);
-        const onlineUser = onlineUsers.find((user) => user.userId === otherUser);
-        console.log("Online Status for Other User:", onlineUser);
-        setUserStatus(onlineUser ? "online" : "offline");
+      console.log("Online Users:", onlineUsers);
+      console.log("Other User:", otherUser);
+      const onlineUser = onlineUsers.find((user) => user.userId === otherUser);
+      console.log("Online Status for Other User:", onlineUser);
+      setUserStatus(onlineUser ? "online" : "offline");
     });
 
     return () => {
-        socket.current.disconnect();
+      socket.current.disconnect();
     };
-}, [otherUser]);
+  }, [otherUser]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -65,55 +65,8 @@ const IndividualChat = ({ conversationId }) => {
 
     return () => {
       socket.current.disconnect();
-  };
+    };
   }, [user]);
-
-  useEffect(() => {
-    const getConversation = async () => {
-      try {
-        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/conversationsById/${conversationId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setCurrentConversation(data);
-            setOtherUser(data.members.find((member) => member !== user._id));
-          })
-          .catch((err) => console.log(err));
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getConversation();
-  }, [conversationId]);
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setOtherUserDetails(data.user);
-          })
-          .catch((err) => console.log(err));
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-  
-    
-
-    getUser();
-  }, [otherUser ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,12 +104,15 @@ const IndividualChat = ({ conversationId }) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/messages/${conversationId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        fetch(
+          `${process.env.REACT_APP_BACKEND_ADDR}/api/messages/${conversationId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
           .then((res) => res.json())
           .then((data) => {
             setMessages(data);
@@ -170,10 +126,12 @@ const IndividualChat = ({ conversationId }) => {
     getMessages();
   }, [conversationId]);
 
+
+
   return (
     <div className="">
-      <div className="IC-user-info">
-        <ArrowBackIcon className="IC-back-icon" />
+      <div className="IC-user-info" onClick={()=> setInfoVisible(true)}>
+        <Link to="/home"><ArrowBackIcon className="IC-back-icon" /></Link>
         <img
           className="IC-user-img"
           src={
