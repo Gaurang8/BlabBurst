@@ -41,7 +41,7 @@ function App() {
         },
         credentials: 'include',
       });
-
+      
       if (response.ok) {
         console.log('logout successfully');
         authUser();

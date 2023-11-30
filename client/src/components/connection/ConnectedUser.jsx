@@ -11,7 +11,7 @@ const ConnectedUser = ({ connection, user }) => {
 
     console.log(otherUser);
     try {
-      fetch(`http://localhost:8000/auth/user/${otherUser}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

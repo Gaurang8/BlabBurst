@@ -71,7 +71,7 @@ const IndividualChat = ({ conversationId }) => {
   useEffect(() => {
     const getConversation = async () => {
       try {
-        fetch(`http://localhost:8000/api/conversationsById/${conversationId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/conversationsById/${conversationId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -93,7 +93,7 @@ const IndividualChat = ({ conversationId }) => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        fetch(`http://localhost:8000/auth/user/${otherUser}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -130,7 +130,7 @@ const IndividualChat = ({ conversationId }) => {
     });
 
     try {
-      fetch(`http://localhost:8000/api/messages`, {
+      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/messages`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ const IndividualChat = ({ conversationId }) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        fetch(`http://localhost:8000/api/messages/${conversationId}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/messages/${conversationId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

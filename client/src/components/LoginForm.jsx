@@ -49,7 +49,7 @@ const LoginForm = () => {
 
         const { emailphone, password } = values;
 
-        fetch("http://localhost:8000/auth/login", {
+        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" ,
         },

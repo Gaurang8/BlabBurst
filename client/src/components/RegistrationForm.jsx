@@ -115,7 +115,7 @@ const RegistrationForm = () => {
           address: values.address,
           profile_pic: values.file,
         };
-        fetch("http://localhost:8000/auth/register", {
+        fetch( `${process.env.REACT_APP_BACKEND_ADDR}/auth/register`, {
           method: "POST",
           body: JSON.stringify(data),
           headers: { "Content-Type": "application/json" ,

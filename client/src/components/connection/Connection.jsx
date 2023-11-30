@@ -11,7 +11,7 @@ const Connection = () => {
 
   useEffect(() => {
 
-    fetch(`http://localhost:8000/api/conversations/${user?._id}` , {
+    fetch(`${process.env.REACT_APP_BACKEND_ADDR}/api/conversations/${user?._id}` , {
 
       method : "GET",
       headers : {
