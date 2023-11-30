@@ -1,0 +1,89 @@
+.IC-container{
+    max-height: calc(100vh - 145px);
+    overflow-y: scroll;
+    padding: 0px 20px 10px 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 0 5px #00000020;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+.IC-container::-webkit-scrollbar{
+    width: 5px;
+}
+.IC-container::-webkit-scrollbar-thumb{
+    background-color: #b9b9b9;
+    border-radius: 5px;
+}
+.IC-container::-webkit-scrollbar-track{
+    /* background-color: #fff; */
+    border-radius: 5px;
+}
+.IC-user-info{
+    display: flex;
+    align-items: center;
+    /* margin-bottom: 10px; */
+    gap: 10px;
+    height: 60px;
+    border-bottom: 1px solid #00000020;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    /* margin: 0 -20px 10px -10px; */
+}
+.IC-back-icon{
+    font-size: 20px;
+    cursor: pointer;
+}
+.IC-user-img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.IC-user-name{
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.IC-user-name p{
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #8b8b8b;
+}
+
+.IC-input{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px ;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-bottom: 1px solid #00000020;
+}
+.IC-input input{
+    width: 100%;
+    height: 100%;
+    border: 1px solid #00000020;
+    outline: none;
+    font-size: 14px;
+    font-weight: 400;
+    color: #00000080;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+.IC-input button{
+    border: none;
+    outline: none;
+    background-color: green;
+    height: 40px;
+    width: auto;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+}

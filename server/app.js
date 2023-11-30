@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const authRoutes = require("./routes/authroutes");
+const chatRoutes = require("./routes/Chatroutes");
 
 dotenv.config();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 
 app.use("/auth", authRoutes);
+app.use('/api', chatRoutes);
 
 
 app.get("/", (req, res) => {

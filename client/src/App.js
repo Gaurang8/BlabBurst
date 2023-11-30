@@ -77,7 +77,8 @@ function App() {
   , []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <div className='main-web-div'>
+      <AuthContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <Routes>
           {!user && (
@@ -93,11 +94,14 @@ function App() {
               <Route path='/login' element={<Navigate to="/home" />} />
               <Route path='/register' element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
+              <Route path="/home/:id" element={<Home />} />
+              
             </>
           )}
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>
+    </div>
   );
 }
 

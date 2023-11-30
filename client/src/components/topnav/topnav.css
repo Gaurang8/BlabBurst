@@ -1,0 +1,53 @@
+.tn-container{
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    background-color: white;
+    border-radius: 5px;
+    border-bottom: 2px solid #00000020;
+}
+.tn-avtar-div{
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tn-name-email-div{
+    flex: 1;
+    width: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 5px;
+}
+.tn-name-div{
+    font-size: 1rem;
+    font-weight: 600;
+}
+.tn-email-div{
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #00000080;
+}
+.tn-notification-div{
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.tn-notification-div:first-child{
+    width: 25px;
+    height: 25px;
+    fill: #00000080;
+}
+.tn-notification-div svg{
+    width: 25px;
+    height: 25px;
+    fill: #00000098;
+}
