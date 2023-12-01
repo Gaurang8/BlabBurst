@@ -11,6 +11,11 @@ const ConnectedUser = ({ connection, user }) => {
 
     console.log(otherUser);
     try {
+
+      if(otherUser === null || otherUser === undefined){
+        return
+      }
+
       fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
         method: "GET",
         headers: {

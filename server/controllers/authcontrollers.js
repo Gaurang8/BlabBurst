@@ -97,8 +97,12 @@ const {
   
   const getUserById = async (req, res) => {
     try {
-      const user = await User.findById(req.params.id);
-      res.status(200).json({ user });
+          
+      if(req.params.id !== null){
+        console.log(req.params.id)
+        const user = await User.findById(req.params.id);
+        res.status(200).json({ user });
+      }
     } catch (err) {
       console.log(err);
     }

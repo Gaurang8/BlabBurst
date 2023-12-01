@@ -55,6 +55,11 @@ const Home = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
+
+        if(otherUser === null || otherUser === undefined){
+          return
+        }
+
         fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
           method: "GET",
           headers: {
@@ -65,7 +70,7 @@ const Home = () => {
           .then((data) => {
             setOtherUserDetails(data.user);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log("ss"));
       } catch (err) {
         console.log(err);
       }

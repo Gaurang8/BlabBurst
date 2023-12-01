@@ -28,6 +28,9 @@ const IndividualChat = ({
       path: "/socket.io",
     });
 
+    
+    console.log(socket.current)
+
     socket.current.on("getMessage", (data) => {
       setCommingMessage({
         sender: data.senderId,
@@ -47,9 +50,9 @@ const IndividualChat = ({
       setUserStatus(onlineUser ? "online" : "offline");
     });
 
-    return () => {
-      socket.current.disconnect();
-    };
+    // return () => {
+    //   socket.current.disconnect();
+    // };
   }, [otherUser]);
 
   useEffect(() => {
@@ -64,8 +67,10 @@ const IndividualChat = ({
 
   useEffect(() => {
     socket.current.emit("addUser", user._id);
+    console.log("User connected");
 
     return () => {
+      console.log("User disconnected");
       socket.current.disconnect();
     };
   }, [user]);
@@ -169,7 +174,7 @@ const IndividualChat = ({
             onChange={(e) => setNewMessage(e.target.value)}
             value={newMessage}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
-            onSubmitEditing={(e) => e.preventDefault()}
+            // onSubmitEditing={(e) => e.preventDefault()}
           />
           <button type="submit" onTouchEnd={handleTouchEnd}>
             Send
