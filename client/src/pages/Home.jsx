@@ -87,17 +87,35 @@ const Home = () => {
           </div>
         </>
       ) : (
-        <div className="home-main-container">
-          <div className="home-body-container">
-            <IndividualChat
-              conversationId={id}
-              otherUserDetails={otherUserDetails}
-              otherUser={otherUser}
-              currentConversation={currentConversation}
-              setInfoVisible={setInfoVisible}
-            />
+        <>
+          <div className="home-main-container">
+            <div className="home-body-container">
+              <IndividualChat
+                conversationId={id}
+                otherUserDetails={otherUserDetails}
+                otherUser={otherUser}
+                currentConversation={currentConversation}
+                setInfoVisible={setInfoVisible}
+              />
+            </div>
           </div>
-        </div>
+          <div
+            className="home-main-aside"
+            onClick={() => setInfoVisible(!infoVisible)}
+          >
+            {width > 1000 ? (
+              <Information />
+            ) : (
+              <Drawer
+                anchor="right"
+                open={infoVisible}
+                onClose={() => setInfoVisible(false)}
+              >
+                <Information otherUserDetails={otherUserDetails} />
+              </Drawer>
+            )}
+          </div>
+        </>
       )}
     </>
   ) : (

@@ -1,4 +1,4 @@
-const app = require("./app");
+const { app, server, io } = require("./app"); 
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 8000;
@@ -6,12 +6,11 @@ const port = process.env.PORT || 8000;
 const url = `${process.env.MONGODB_URI}Chats?retryWrites=true&w=majority`;
 
 
-
 mongoose
   .connect(url)
   .then(() => {
     console.log("Connected to the database successfully");
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Server is running on port: ${port}`);
     });
   })

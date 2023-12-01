@@ -1,5 +1,6 @@
 .IC-container{
     max-height: calc(100vh - 145px);
+    height: auto;
     overflow-y: scroll;
     padding: 0px 20px 10px 10px;
     box-sizing: border-box;
@@ -62,6 +63,8 @@
     align-items: center;
     gap: 10px;
     padding: 10px ;
+    /* position: sticky; */
+    /* bottom: 0; */
     box-sizing: border-box;
     background-color: #fff;
     border-bottom: 1px solid #00000020;

@@ -24,7 +24,9 @@ const IndividualChat = ({
   const [userStatus, setUserStatus] = useState("offline");
 
   useEffect(() => {
-    socket.current = io("wss://socketchatweb.onrender.com");
+    socket.current = io("wss://bbchatbackend.onrender.com", {
+      path: "/socket.io",
+    });
 
     socket.current.on("getMessage", (data) => {
       setCommingMessage({
@@ -126,6 +128,10 @@ const IndividualChat = ({
     getMessages();
   }, [conversationId]);
 
+  const handleTouchEnd = (e) => {
+      e.preventDefault()
+      handleSubmit(e)
+  }
 
 
   return (
@@ -155,22 +161,21 @@ const IndividualChat = ({
           );
         })}
       </div>
-      <div className="IC-input">
-        <input
-          type="text"
-          placeholder="Type a message..."
-          onChange={(e) => setNewMessage(e.target.value)}
-          value={newMessage}
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
-        />
-        <button
-          onClick={(e) => {
-            handleSubmit(e);
-          }}
-        >
-          Send
-        </button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="IC-input">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            onChange={(e) => setNewMessage(e.target.value)}
+            value={newMessage}
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
+            onSubmitEditing={(e) => e.preventDefault()}
+          />
+          <button type="submit" onTouchEnd={handleTouchEnd}>
+            Send
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
