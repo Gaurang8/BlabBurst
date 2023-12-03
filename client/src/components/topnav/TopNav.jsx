@@ -64,7 +64,7 @@ const TopNav = () => {
     // debounce
     const timeoutId = setTimeout(() => {
       getSearchedUser(searchUser);
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [searchUser]);
@@ -138,6 +138,7 @@ const TopNav = () => {
             }}
             aria-labelledby="draggable-dialog-title"
           >
+            <div className="outer-search-connection">
             <div style={{ cursor: "move" , width:"100%" , fontSize:"20px" , fontWeight:"600" , marginBlock:"10px" }} id="draggable-dialog-title">
               Search For User
             </div>
@@ -165,6 +166,7 @@ const TopNav = () => {
               }
              
 
+            </div>
             </div>
           </Dialog>
         </div>
