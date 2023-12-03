@@ -30,6 +30,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    connected_users: {
+        type: Array,
+        required: false
+    },
    
 }, { timestamps: true });
 

@@ -1,14 +1,12 @@
-import React, { useState , useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "./FormInput";
 import "./registration.css";
 import logoimg from "../svg/logo192.png";
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { AuthContext } from "../AuthContext";
 
-
 const RegistrationForm = () => {
-
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -19,10 +17,10 @@ const RegistrationForm = () => {
     file: "",
   });
 
-  const {user , setUser} = useContext(AuthContext)
+  const { user, setUser } = useContext(AuthContext);
   const [statePage, setStatePage] = useState(1);
 
-
+  const CLOUDINARY_UPLOAD_PRESET = "gaurang";
 
   const inputs = [
     {
@@ -101,13 +99,13 @@ const RegistrationForm = () => {
     },
   ];
 
-  const handlePageSubmit = (e) => {
+  const handlePageSubmit = async (e) => {
     e.preventDefault();
     if (statePage === 1) {
       setStatePage(2);
     } else {
       try {
-        const data = {
+        const Finaldata = {
           name: values.username,
           email: values.email,
           password: values.password,
@@ -115,37 +113,81 @@ const RegistrationForm = () => {
           address: values.address,
           profile_pic: values.file,
         };
-        fetch( `${process.env.REACT_APP_BACKEND_ADDR}/auth/register`, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" ,
-        },
-          credentials: "include",
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-            setUser(data?.user)
-            setValues({
-              username: "",
-              email: "",
-              password: "",
-              confirmPassword: "",
-              phone: "",
-              address: "",
-              file: "",
-            });
-            setStatePage(1);
-          });
+
+        if (values.file) {
+          const formData = new FormData();
+          formData.append("file", values.file);
+          formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+          await fetch(process.env.REACT_APP_CLOUDINARY_URL, {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then(async (data) => {
+              console.log(data);
+              if (data.secure_url !== "") {
+                Finaldata.profile_pic = data.secure_url;
+                try {
+                  handleFormSubmit(Finaldata);
+                } catch (err) {
+                  console.log(err);
+                }
+              }
+            })
+
+            .catch((err) => console.log(err));
+        } else {
+          try {
+            handleFormSubmit(Finaldata);
+          } catch (err) {
+            console.log(err);
+          }
+        }
       } catch (err) {
         console.log(err);
       }
     }
   };
 
-  const onChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+  const handleFormSubmit = (data) => {
+    try {
+      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/register`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setUser(data?.user);
+          setValues({
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            phone: "",
+            address: "",
+            file: "",
+          });
+          setStatePage(1);
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+ const onChange = (e) => {
+  if (e.target.name === "file") {
+    const file = e.target.files[0];
+    console.log(file.name);
+    setValues({ ...values, file: file });
+  } else {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  }
+};
+
 
   return (
     <>
@@ -167,29 +209,50 @@ const RegistrationForm = () => {
             ))}
             <button className="full-btn">Submit</button>
             <p className="bottom-text">
-              Already have an account? 
-              <Link to="/login" > <span > Login</span></Link>
+              Already have an account?
+              <Link to="/login">
+                {" "}
+                <span> Login</span>
+              </Link>
             </p>
           </>
         ) : (
           <>
             {input2.map((input) => (
-              <FormInput
+              
+              input.name === "file" ? (
+                <FormInput
+                key={input.id}
+                {...input}
+                onChange={onChange}
+              />
+              ) : (
+                <FormInput
                 key={input.id}
                 {...input}
                 value={values[input.name]}
                 onChange={onChange}
               />
+              )
+
             ))}
-            <div  style={{display:"flex" , justifyContent:"space-between"}}>
-              <button onClick={() => setStatePage(1)} className="half-secondary-btn" > <KeyboardBackspaceIcon/> Prev</button>
-              < button  className="half-primary-btn">Submit</button>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <button
+                onClick={() => setStatePage(1)}
+                className="half-secondary-btn"
+              >
+                {" "}
+                <KeyboardBackspaceIcon /> Prev
+              </button>
+              <button className="half-primary-btn">Submit</button>
             </div>
             <p className="bottom-text">
-              Already have an account? 
-              <Link to="/login" > <span > Login</span></Link>
+              Already have an account?
+              <Link to="/login">
+                {" "}
+                <span> Login</span>
+              </Link>
             </p>
-
           </>
         )}
       </form>

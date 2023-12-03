@@ -147,7 +147,7 @@ const Home = () => {
         onClick={() => setInfoVisible(!infoVisible)}
       >
         {width > 1000 ? (
-          <Information />
+          <Information otherUserDetails={otherUserDetails} />
         ) : (
           <Drawer
             anchor="right"

@@ -1,9 +1,9 @@
 .c-main-div{
-    height: calc(100vh - 110px);
+    height: calc(100vh - 85px);
     width: 100%;
     background-color: white;
-    border-radius: 5px;
-    border-bottom: 2px solid #00000020;
+    /* border-radius: 5px; */
+    /* border-bottom: 2px solid #00000020; */
     padding: 0 0 0 10px;
     overflow-y: scroll;
 }
@@ -11,7 +11,7 @@
     width: 5px;
 }
 .c-main-div::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: white; 
 }
 .c-main-div::-webkit-scrollbar-thumb {
     background: #888; 

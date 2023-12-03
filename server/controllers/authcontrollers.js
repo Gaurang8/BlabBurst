@@ -29,7 +29,8 @@ const {
         password: encryptedPassword,
         phone_number,
         address,
-        profile_pic
+        profile_pic,
+        connected_users: []
       });
   
       const token = generateToken(newUser._id, newUser.email);

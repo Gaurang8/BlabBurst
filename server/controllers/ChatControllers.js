@@ -1,19 +1,36 @@
 
 const Conversation = require('../modals/conversationModal');
 const Message = require('../modals/messagemodal');
+const User = require('../modals/usermodal');
 
 const NewConversation = async (req, res) => {
     const newConversation = new Conversation({
         members: [req.body.senderId, req.body.receiverId],
     });
 
+
+    let user = await User.findOne({ _id: req.body.senderId });
+    let otherUser = await User.findOne({ _id: req.body.receiverId });
+
+    user.connected_users.push(req.body.receiverId);
+    otherUser.connected_users.push(req.body.senderId);
+
+    await user.save();
+    await otherUser.save();
+
+
     try {
         const savedConversation = await newConversation.save();
-        res.status(200).json(savedConversation);
+        res.status(200).json({
+            status: "success",
+            data: savedConversation,
+            user: user,
+        });
     } catch (err) {
         res.status(500).json(err);
     }
 }
+
 
 const GetConversation = async (req, res) => {
     try {
@@ -27,7 +44,7 @@ const GetConversation = async (req, res) => {
 }
 
 const getConversationByConversationId = async (req, res) => {
-    console.log("conversation is ",req.params.conversationId);
+    console.log("conversation is ", req.params.conversationId);
 
     try {
         const conversation = await Conversation.findOne({
@@ -39,6 +56,31 @@ const getConversationByConversationId = async (req, res) => {
     }
 }
 
+const getunknownuserToConnect = async (req, res) => {
+    const user = await User.findOne({ _id: req.params.userId });
+    const search = req.params.search
+    const connected_users = user.connected_users;
+
+    try {
+
+        const all_user = await User.find({ $and: [{ _id: { $nin: connected_users } }, { _id: { $ne: req.params.userId } }, { name: { $regex: search, $options: "i" } }] });
+        res.status(200).json(all_user);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
+const getAllunknownuser = async (req, res) => {
+    const user = await User.findOne({ _id: req.params.userId });
+    const connected_users = user.connected_users;
+
+    try {
+
+        const all_user = await User.find({ $and: [{ _id: { $nin: connected_users } }, { _id: { $ne: req.params.userId } }] });
+        res.status(200).json(all_user);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}
 
 const GetConversationIncludesTwoUsers = async (req, res) => {
     try {
@@ -79,7 +121,9 @@ module.exports = {
     GetConversation,
     GetConversationIncludesTwoUsers,
     getConversationByConversationId,
+    getunknownuserToConnect,
+    getAllunknownuser,
     GetMessages,
     NewMessage,
-    
+
 }
