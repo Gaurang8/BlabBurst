@@ -1,12 +1,17 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FormInput from "./FormInput";
 import "./registration.css";
 import logoimg from "../svg/logo192.png";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { AuthContext } from "../AuthContext";
+import {  useDispatch } from "react-redux";
+import { login } from "../app/AuthReducer";
 
 const RegistrationForm = () => {
+
+
+  const dispatch = useDispatch();
+
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -17,7 +22,6 @@ const RegistrationForm = () => {
     file: "",
   });
 
-  const { user, setUser } = useContext(AuthContext);
   const [statePage, setStatePage] = useState(1);
 
   const CLOUDINARY_UPLOAD_PRESET = "gaurang";
@@ -161,7 +165,7 @@ const RegistrationForm = () => {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          setUser(data?.user);
+          dispatch(login(data?.user));
           setValues({
             username: "",
             email: "",

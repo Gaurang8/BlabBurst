@@ -9,6 +9,7 @@
 }
 .c-main-div::-webkit-scrollbar {
     width: 5px;
+    height: 5px;
 }
 .c-main-div::-webkit-scrollbar-track {
     background: white; 
@@ -95,10 +96,13 @@
     height: 25px;
     fill: #00000098;
 }
-.cu-container:hover {
+.cu-container:hover , 
+.cu-container.active {
     background-color: #ffa139;
     color: white !important;
 }
-.cu-container:hover .cu-email-div{
+.cu-container:hover .cu-email-div , 
+.cu-container.active .cu-email-div
+{
     color: #fff;
 }

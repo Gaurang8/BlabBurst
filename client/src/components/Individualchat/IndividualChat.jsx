@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Message from "../Message/Message";
 import "./Individualchat.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,15 +6,18 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { AuthContext } from "../../AuthContext";
 import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const IndividualChat = ({
-  conversationId,
-  otherUserDetails,
-  otherUser,
-  currentConversation,
-  setInfoVisible,
-}) => {
-  const { user, setUser } = useContext(AuthContext);
+const IndividualChat = ({ setInfoVisible }) => {
+  const user = useSelector((state) => state.auth.user);
+  const conversationId = useSelector(
+    (state) => state.chat.currentConversationId
+  );
+  const otherUserDetails = useSelector((state) => state.chat.otherUserDetails);
+  const otherUser = useSelector((state) => state.chat.otherUserId);
+  const currentConversation = useSelector(
+    (state) => state.chat.currentConversations
+  );
 
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -23,13 +26,14 @@ const IndividualChat = ({
   const scrollRef = useRef();
   const [userStatus, setUserStatus] = useState("offline");
 
+  const [containerheight , setContainerHeight] = useState(window.innerHeight - 120)
+
   useEffect(() => {
     socket.current = io("wss://bbchatbackend.onrender.com", {
       path: "/socket.io",
     });
 
-    
-    console.log(socket.current)
+    console.log(socket.current);
 
     socket.current.on("getMessage", (data) => {
       setCommingMessage({
@@ -134,15 +138,16 @@ const IndividualChat = ({
   }, [conversationId]);
 
   const handleTouchEnd = (e) => {
-      e.preventDefault()
-      handleSubmit(e)
-  }
-
+    e.preventDefault();
+    handleSubmit(e);
+  };
 
   return (
     <div className="">
-      <div className="IC-user-info" onClick={()=> setInfoVisible(true)}>
-        <Link to="/home"><ArrowBackIcon className="IC-back-icon" /></Link>
+      <div className="IC-user-info" onClick={() => setInfoVisible(true)}>
+        <Link to="/home">
+          <ArrowBackIcon className="IC-back-icon" />
+        </Link>
         <img
           className="IC-user-img"
           src={
@@ -157,7 +162,12 @@ const IndividualChat = ({
           <p>{userStatus}</p>
         </div>
       </div>
-      <div className="IC-container">
+      <div
+        className="IC-container"
+        style={{
+          maxHeight: `${containerheight}px`,
+        }}
+      >
         {messages.map((message, index) => {
           return (
             <div key={index} ref={scrollRef}>
@@ -173,6 +183,12 @@ const IndividualChat = ({
             placeholder="Type a message..."
             onChange={(e) => setNewMessage(e.target.value)}
             value={newMessage}
+            onFocus={()=>{
+              setContainerHeight(window.innerHeight - 120) 
+            }}
+            onBlur={()=>{
+              setContainerHeight(window.innerHeight - 120)
+            }}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
             // onSubmitEditing={(e) => e.preventDefault()}
           />

@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+
+import { useDispatch , useSelector } from 'react-redux';
+import {login ,logout , loginError } from './app/AuthReducer';
+
 import './App.css';
 import RegistrationForm from './components/RegistrationForm';
-import { AuthContext } from './AuthContext';
 import LoginForm from './components/LoginForm';
 import Home from './pages/Home';
 
 function App() {
-  const [user, setUser] = useState(null);
-  // const navigate = useNavigate();
 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useDispatch();
+  
   const authUser = async () => {
     const response = await fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/auth/`, {
       method: 'GET',
@@ -22,11 +26,13 @@ function App() {
     const result = await response.json();
 
     if (response.ok) {
-      console.log('user is authenticated');
-      console.log(result.user);
+      // console.log('user is authenticated');
+      // console.log(result.user);
+      dispatch(login(result?.user))
       return result.user;
     } else {
       console.log('error while fetching user');
+      dispatch(loginError())
       return null;
     }
   };
@@ -44,7 +50,7 @@ function App() {
       
       if (response.ok) {
         console.log('logout successfully');
-        authUser();
+        dispatch(logout())
       } else {
         console.error('Logout failed');
       }
@@ -53,54 +59,34 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     const authenticatedUser = await authUser();
-  //     setUser(authenticatedUser);
-
-  //     if (authenticatedUser) {
-  //       navigate('/home');
-  //     } else {
-  //       navigate('/login');
-  //     }
-  //   };
-  //   fetchUser();
-  // }, [navigate]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const authenticatedUser = await authUser();
-      setUser(authenticatedUser);
-    };
-    fetchUser();
+    authUser();
   } 
   , []);
 
   return (
     <div className='main-web-div'>
-      <AuthContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
         <Routes>
-          {!user && (
+          {!isAuthenticated && (
             <>
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegistrationForm />} />
-              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="*" element={<Navigate to="/login" />} />
             </>
           )}
 
-          {user && (
+          {isAuthenticated && (
             <>
               <Route path='/login' element={<Navigate to="/home" />} />
               <Route path='/register' element={<Navigate to="/home" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/home/:id" element={<Home />} />
-              
             </>
           )}
         </Routes>
       </BrowserRouter>
-    </AuthContext.Provider>
     </div>
   );
 }

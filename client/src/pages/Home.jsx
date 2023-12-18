@@ -1,22 +1,26 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./Home.css";
 import TopNav from "../components/topnav/TopNav";
 import Connection from "../components/connection/Connection";
 import IndividualChat from "../components/Individualchat/IndividualChat";
 import Information from "../components/information/Imformation";
-import { AuthContext } from "../AuthContext";
 import Drawer from "@mui/material/Drawer";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setCurrentConversationId,
+  setCurrentConversations,
+  setOtherUserId,
+  setOtherUserDetails,
+} from "../app/ChatReducer";
 
 const Home = () => {
   const { id } = useParams();
 
-  const [currentConversation, setCurrentConversation] = useState(null);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const otherUserId = useSelector((state) => state.chat.otherUserId);
 
-  const [otherUser, setOtherUser] = useState(null);
-  const [otherUserDetails, setOtherUserDetails] = useState(null);
-
-  const { user, setUser } = useContext(AuthContext);
   const [width, setWidth] = useState(window.innerWidth);
   const [infoVisible, setInfoVisible] = useState(false);
 
@@ -41,10 +45,22 @@ const Home = () => {
         )
           .then((res) => res.json())
           .then((data) => {
-            setCurrentConversation(data);
-            setOtherUser(data.members.find((member) => member !== user._id));
+            dispatch(setCurrentConversationId(data._id));
+            dispatch(setCurrentConversations(data));
+            dispatch(
+              setOtherUserId(
+                data.members.find((member) => member !== user?._id)
+              )
+            );
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err)
+            dispatch(setCurrentConversationId(null));
+            dispatch(setCurrentConversations(null));
+            dispatch(setOtherUserId(null));
+            dispatch(setOtherUserDetails(null));
+          });
+          
       } catch (err) {
         console.log(err);
       }
@@ -52,34 +68,32 @@ const Home = () => {
     getConversation();
   }, [id]);
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-
-        if(otherUser === null || otherUser === undefined){
-          return
-        }
-
-        fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setOtherUserDetails(data.user);
-          })
-          .catch((err) => console.log("ss"));
-      } catch (err) {
-        console.log(err);
+  const getUser = async (otherUserId) => {
+    try {
+      if (otherUserId === null || otherUserId === undefined) {
+        return;
       }
-    };
 
-    getUser();
-  }, [otherUser]);
+      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUserId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          dispatch(setOtherUserDetails(data.user));
+        })
+        .catch((err) => console.log("ss"));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  console.log(id);
+  useEffect(() => {
+    getUser(otherUserId);
+  }, [otherUserId]);
+
   return width < 768 ? (
     <>
       {!id ? (
@@ -95,18 +109,12 @@ const Home = () => {
         <>
           <div className="home-main-container">
             <div className="home-body-container">
-              <IndividualChat
-                conversationId={id}
-                otherUserDetails={otherUserDetails}
-                otherUser={otherUser}
-                currentConversation={currentConversation}
-                setInfoVisible={setInfoVisible}
-              />
+              <IndividualChat setInfoVisible={setInfoVisible} />
             </div>
           </div>
           <div
             className="home-main-aside"
-            onClick={() => setInfoVisible(!infoVisible)}
+            // onClick={() => setInfoVisible(!infoVisible)}
           >
             {width > 1000 ? (
               <Information />
@@ -116,7 +124,7 @@ const Home = () => {
                 open={infoVisible}
                 onClose={() => setInfoVisible(false)}
               >
-                <Information otherUserDetails={otherUserDetails} />
+                <Information />
               </Drawer>
             )}
           </div>
@@ -131,15 +139,14 @@ const Home = () => {
       </div>
       <div className="home-body-container">
         {id ? (
-          <IndividualChat
-            conversationId={id}
-            otherUserDetails={otherUserDetails}
-            otherUser={otherUser}
-            currentConversation={currentConversation}
-            setInfoVisible={setInfoVisible}
-          />
+          <IndividualChat setInfoVisible={setInfoVisible} />
         ) : (
-          <div className="home-body">body</div>
+          <div className="home-body">
+            <div className="home-body-text-xr">
+              <h1>Welcome to BlabBurst</h1>
+              <p>Click on a chat to start messaging</p>
+            </div>
+          </div>
         )}
       </div>
       <div
@@ -147,14 +154,14 @@ const Home = () => {
         onClick={() => setInfoVisible(!infoVisible)}
       >
         {width > 1000 ? (
-          <Information otherUserDetails={otherUserDetails} />
+          <Information />
         ) : (
           <Drawer
             anchor="right"
             open={infoVisible}
             onClose={() => setInfoVisible(false)}
           >
-            <Information otherUserDetails={otherUserDetails} />
+            <Information />
           </Drawer>
         )}
       </div>

@@ -21,6 +21,7 @@
       border-radius: 20px;
       background-color: #1877f2;
       color: white;
+      word-break: break-all;
       max-width: 300px;
   }
   

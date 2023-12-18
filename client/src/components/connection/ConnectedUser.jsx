@@ -2,21 +2,22 @@ import React, { useEffect , useState } from "react";
 import "./connection.css";
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ConnectedUser = ({ connection, user }) => {
   const [otherUser, setOtherUser] = useState({});
 
   useEffect(() => {
-    let otherUser = connection?.members?.find((member) => member !== user._id);
+    let otherUserId = connection?.members?.find((member) => member !== user._id);
 
-    console.log(otherUser);
+    console.log(otherUserId);
     try {
 
-      if(otherUser === null || otherUser === undefined){
+      if(otherUserId === null || otherUserId === undefined){
         return
       }
 
-      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUser}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_ADDR}/auth/user/${otherUserId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -40,7 +41,7 @@ const ConnectedUser = ({ connection, user }) => {
 
   return (
    <Link to={`/home/${connection?._id}`} style={{textDecoration:'none', color:"black"}}>
-     <div className="cu-container">
+     <div className={`cu-container ${useParams().id === connection?._id ? "active" : ""}`}>
       <div className="cu-avtar-div">
         <Avatar alt="Gaurang Patel" src={otherUser?.profile_pic} />
       </div>

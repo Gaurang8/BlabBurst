@@ -1,5 +1,4 @@
 .IC-container{
-    max-height: calc(100vh - 120px);
     height: auto;
     overflow-y: scroll;
     padding: 0px 20px 10px 10px;
@@ -11,6 +10,8 @@
 }
 .IC-container::-webkit-scrollbar{
     width: 5px;
+    height: 5px;
+
 }
 .IC-container::-webkit-scrollbar-thumb{
     background-color: #b9b9b9;
