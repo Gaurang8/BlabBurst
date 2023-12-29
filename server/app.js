@@ -60,6 +60,31 @@ io.on('connection', socket => {
     }
   });
 
+  socket.on('offer', (data) => {
+    const { targetUserId, offer } = data;
+    const targetUser = users.find((user) => user.userId === targetUserId);
+    const sender = users.find((user) => user.socketId === socket.id);
+
+    if (targetUser) {
+      io.to(targetUser.socketId).emit('receiveOffer', { senderId: sender.userId , offer });
+    }
+  });
+
+  socket.on('answer', (data) => {
+    const { targetUserId, answer } = data;
+    const targetUser = users.find((user) => user.userId === targetUserId);
+
+    const sender = users.find((user) => user.socketId === socket.id);
+
+    console.log("targetUserId", targetUser);
+    console.log("answer", data);
+
+    if (targetUser) {
+      io.to(targetUser.socketId).emit('receiveAnswer', { senderId: sender.senderId, answer });
+    }
+  });
+
+
   socket.on('disconnect', () => {
     console.log("disconnected");
     removeUser(socket.id);

@@ -141,3 +141,8 @@
     line-height: 34px;
     font-family: cursive;
 }
+
+/*  */
+.ss-ss-hidden{
+    display: none !important;
+}
