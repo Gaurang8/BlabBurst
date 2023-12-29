@@ -43,12 +43,12 @@ const IndividualChat = ({ setInfoVisible }) => {
   const remoteVideoRef = useRef();
 
   useEffect(() => {
-    // socket.current = io("wss://bbchatbackend.onrender.com", {
-    //   path: "/socket.io",
-    // });
-    socket.current = io("ws://localhost:8000", {
+    socket.current = io("wss://bbchatbackend.onrender.com", {
       path: "/socket.io",
     });
+    // socket.current = io("ws://localhost:8000", {
+    //   path: "/socket.io",
+    // });
 
     console.log(socket.current);
 
