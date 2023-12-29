@@ -7,6 +7,7 @@
     box-shadow: 0 0 5px #00000020;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
+    max-height: calc(100vh - 120px);
 }
 .IC-container::-webkit-scrollbar{
     width: 5px;
@@ -25,13 +26,26 @@
     display: flex;
     align-items: center;
     /* margin-bottom: 10px; */
-    gap: 10px;
     height: 60px;
+    justify-content: space-between;
     border-bottom: 1px solid #00000020;
     position: sticky;
     top: 0;
     background-color: #fff;
     /* margin: 0 -20px 10px -10px; */
+}
+.IC-user-info-left{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
+}
+.IC-user-info-right{
+    display: flex;
+    align-items: center;
+    /* gap: 20px; */
+    height: 100%;
+    padding-inline: 20px;
 }
 .IC-back-icon{
     font-size: 20px;
@@ -63,31 +77,67 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px ;
-    /* position: sticky; */
-    /* bottom: 0; */
+    padding: 8px ;
     box-sizing: border-box;
     background-color: #fff;
     border-bottom: 1px solid #00000020;
 }
-.IC-input input{
+.IC-input-area{
     width: 100%;
     height: 100%;
-    border: 1px solid #00000020;
+    border-radius: 25px;
+    background-color: #ececec9e;
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+}
+.IC-inp-other-img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #074cd4;    
+    object-fit: cover;
+}
+.IC-input-field{
+    flex: 1 1 auto;
+    height: 100%;
+    /* border: 1px solid #00000020; */
+    border: none;
     outline: none;
     font-size: 14px;
     font-weight: 400;
-    color: #00000080;
+    color: #000000;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     border-radius: 5px;
     padding: 5px 10px;
+    line-height: 34px;
+    background-color: transparent;
 }
-.IC-input button{
+.IC-inp-btn{
     border: none;
     outline: none;
-    background-color: green;
-    height: 40px;
-    width: auto;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: #fff;
+    background-color: transparent;
+    height: 34px;
+    width: fit-content;
+    padding: 0 10px;
+    color: #5e00c9;
+    display: flex;
+    padding-inline: 5px;
+    gap: 5px;
+    cursor: pointer;
+}
+.IC-inp-btn button{
+    border: none;
+    outline: none;
+    background-color: transparent;
+    height: 100%;
+    width: fit-content;
+
+    color: #3a1eed;
+    padding-inline: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 34px;
+    font-family: cursive;
 }

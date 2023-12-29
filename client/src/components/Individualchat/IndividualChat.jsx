@@ -3,10 +3,16 @@ import Message from "../Message/Message";
 import "./Individualchat.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { AuthContext } from "../../AuthContext";
 import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import videoCallsvg from "../../svg/video.svg";
+import callSvg from "../../svg/call.svg";
+import cameraSvg from "../../svg/camera.svg";
+import micSvg from "../../svg/mic.svg";
+import gallarySvg from "../../svg/gallery.svg";
+
+import IconButton from "@mui/material/IconButton";
 
 const IndividualChat = ({ setInfoVisible }) => {
   const user = useSelector((state) => state.auth.user);
@@ -25,8 +31,6 @@ const IndividualChat = ({ setInfoVisible }) => {
   const socket = useRef();
   const scrollRef = useRef();
   const [userStatus, setUserStatus] = useState("offline");
-
-  const [containerheight , setContainerHeight] = useState(window.innerHeight - 120)
 
   useEffect(() => {
     socket.current = io("wss://bbchatbackend.onrender.com", {
@@ -81,6 +85,11 @@ const IndividualChat = ({ setInfoVisible }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!newMessage || newMessage.trim().length <= 0) {
+      return;
+    }
+
     const message = {
       sender: user._id,
       text: newMessage,
@@ -145,29 +154,54 @@ const IndividualChat = ({ setInfoVisible }) => {
   return (
     <div className="">
       <div className="IC-user-info" onClick={() => setInfoVisible(true)}>
-        <Link to="/home">
-          <ArrowBackIcon className="IC-back-icon" />
-        </Link>
-        <img
-          className="IC-user-img"
-          src={
-            otherUserDetails?.profile_pic || "https://i.imgur.com/6VBx3io.png"
-          }
-          alt=""
-          width="40px"
-          height="40px"
-        />
-        <div className="IC-user-name">
-          <h3>{otherUserDetails?.name}</h3>
-          <p>{userStatus}</p>
+        <div className="IC-user-info-left">
+          <Link to="/home">
+            <ArrowBackIcon className="IC-back-icon" />
+          </Link>
+          <img
+            className="IC-user-img"
+            src={
+              otherUserDetails?.profile_pic || "https://i.imgur.com/6VBx3io.png"
+            }
+            alt=""
+            width="40px"
+            height="40px"
+          />
+          <div className="IC-user-name">
+            <h3>{otherUserDetails?.name}</h3>
+            <p>{userStatus}</p>
+          </div>
+        </div>
+        <div className="IC-user-info-right">
+          <IconButton
+            sx={{
+              padding: "0px",
+            }}
+          >
+            <img
+              className="IC-user-img"
+              src={callSvg}
+              alt=""
+              width="40px"
+              height="40px"
+            />
+          </IconButton>
+          <IconButton
+            sx={{
+              padding: "0px",
+            }}
+          >
+            <img
+              className="IC-user-img"
+              src={videoCallsvg}
+              alt=""
+              width="40px"
+              height="40px"
+            />
+          </IconButton>
         </div>
       </div>
-      <div
-        className="IC-container"
-        style={{
-          maxHeight: `${containerheight}px`,
-        }}
-      >
+      <div className="IC-container">
         {messages.map((message, index) => {
           return (
             <div key={index} ref={scrollRef}>
@@ -178,23 +212,29 @@ const IndividualChat = ({ setInfoVisible }) => {
       </div>
       <form onSubmit={handleSubmit}>
         <div className="IC-input">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            onChange={(e) => setNewMessage(e.target.value)}
-            value={newMessage}
-            onFocus={()=>{
-              setContainerHeight(window.innerHeight - 120) 
-            }}
-            onBlur={()=>{
-              setContainerHeight(window.innerHeight - 120)
-            }}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
-            // onSubmitEditing={(e) => e.preventDefault()}
-          />
-          <button type="submit" onTouchEnd={handleTouchEnd}>
-            Send
-          </button>
+          <div className="IC-input-area">
+            <img src={cameraSvg} alt="" className="IC-inp-other-img" />
+            <input
+              type="text"
+              placeholder="Message..."
+              onChange={(e) => setNewMessage(e.target.value)}
+              value={newMessage}
+              className="IC-input-field"
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit(e)}
+            />
+            <div className="IC-inp-btn">
+              {!newMessage.trim().length ? (
+                <>
+                  <img src={micSvg} alt="" />
+                  <img src={gallarySvg} alt="" />
+                </>
+              ) : (
+                <button type="submit" onTouchEnd={handleTouchEnd}>
+                  Send
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </form>
     </div>
