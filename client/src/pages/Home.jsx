@@ -50,8 +50,6 @@ const Home = () => {
   const remoteVideoRef = useRef();
   const [isCalling, setIsCalling] = useState(false);
 
-  const [invertStream, setInvertStream] = useState(false);
-
   useEffect(() => {
     console.log("socket", socket);
 
@@ -130,17 +128,24 @@ const Home = () => {
   }, [otherUserId]);
 
   // handle Video Call functions
+  useEffect(() => {
+    console.log("rererender");
+  }, []);
 
   const startCall = (otherUserId) => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
+    setIsCalling(true);
 
+    navigator.mediaDevices
+      .getUserMedia({
+        video: { width: { ideal: 160 }, height: { ideal: 120 } },
+        audio: true,
+      })
+      .then((stream) => {
         console.log("stream----------------", stream);
 
         localVideoRef.current.srcObject = stream;
 
-        setIsCalling(true);
+        // setIsCalling(true);
 
         peerRef.current = new Peer({ initiator: true, trickle: false, stream });
 
@@ -156,7 +161,7 @@ const Home = () => {
         peerRef.current.on("stream", (remoteStream) => {
           console.log("Received remote stream:", remoteStream);
           remoteVideoRef.current.srcObject = remoteStream;
-          setIsCalling(true);
+          // setIsCalling(true);
         });
       })
       .catch((error) => {
@@ -167,14 +172,15 @@ const Home = () => {
   const handleReceiveOffer = (data) => {
     console.log("receive offer", data);
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
+    setIsCalling(true);
 
+    navigator.mediaDevices
+      .getUserMedia({ video: 
+        { width: { ideal: 160 }, height: { ideal: 120 }}
+        , audio: true })
+      .then((stream) => {
         localVideoRef.current.srcObject = stream;
         console.log("localVideoRef", localVideoRef);
-
-        setIsCalling(true);
 
         peerRef.current = new Peer({ trickle: false, stream });
 
@@ -219,12 +225,20 @@ const Home = () => {
   useEffect(() => {
     console.log("local stream --00--00--", localVideoRef.current.srcObject);
     // console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
-  }, [localVideoRef.current]);
+  }, [localVideoRef.current?.srcObject]);
 
   useEffect(() => {
     console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
-  }
-  , [remoteVideoRef.current]);
+  }, [remoteVideoRef.current?.srcObject]);
+
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     console.log("local stream --00--", localVideoRef.current.srcObject);
+  //     console.log("remote stream --00--", remoteVideoRef.current.srcObject);
+
+  //   }, 2000);
+
+  // }, []);
 
   return width < 768 ? (
     <>
@@ -302,16 +316,14 @@ const Home = () => {
         <div id="draggable-dialog-title">
           <div className="h-reciever-vcall">
             <video
-              ref={ remoteVideoRef }
+              ref={remoteVideoRef}
               autoPlay
               playsInline
-              // muted
               style={{ border: "1px solid black" }}
             />
             <div className="h-sender-vcall">
               <video
-                ref={ localVideoRef}
-                // src={localStream}
+                ref={localVideoRef}
                 autoPlay
                 playsInline
                 style={{ border: "1px solid black" }}
@@ -389,7 +401,6 @@ const Home = () => {
         PaperComponent={PaperComponent}
         style={{
           position: "relative",
-          overflow: "auto",
         }}
         aria-labelledby="draggable-dialog-title"
       >
@@ -399,15 +410,9 @@ const Home = () => {
               ref={remoteVideoRef}
               autoPlay
               playsInline
-              muted
               style={{ border: "1px solid black" }}
             />
-            <div
-              className=""
-              onClick={() => {
-                setInvertStream(!invertStream);
-              }}
-            >
+            <div className="h-sender-vcall">
               <video
                 ref={localVideoRef}
                 autoPlay
