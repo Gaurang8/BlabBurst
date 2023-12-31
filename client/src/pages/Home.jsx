@@ -199,12 +199,16 @@ const Home = () => {
     setTimeout(() => {
       console.log("clearInterval");
       clearInterval(intervalId);
-      handleCallHangup();
+      if (incommingCall) {
+        handleCallHangup();
+      }
     }, 9000);
   };
 
   const handleReceiveOffer = (data) => {
     console.log("going to receive");
+
+    setInCommingCall(false);
 
     navigator.mediaDevices
       .getUserMedia({
