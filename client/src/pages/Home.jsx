@@ -373,14 +373,26 @@ const Home = () => {
             <div className="h-sender-vcall">
               <video ref={localVideoRef} autoPlay playsInline />
             </div>
-            <div
-              className="vcall-hangup"
-              onClick={() => {
-                handleCallHangup();
-              }}
-            >
-              End
-            </div>
+            {!incommingCall  ? (
+              <div
+                className="vcall-hangup"
+                onClick={() => {
+                  handleCallHangup();
+                }}
+              >
+                End
+              </div>
+            ) : (
+              <div
+                className="vcall-hangup"
+                onClick={() => {
+                  console.log("folseeeeee");
+                  setInCommingCall(false);
+                }}
+              >
+                Receive
+              </div>
+            )}
           </div>
         </div>
       </Dialog>
