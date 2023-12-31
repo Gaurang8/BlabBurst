@@ -221,6 +221,11 @@ const Home = () => {
     // console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
   }, [localVideoRef.current]);
 
+  useEffect(() => {
+    console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
+  }
+  , [remoteVideoRef.current]);
+
   return width < 768 ? (
     <>
       {!id ? (
@@ -300,7 +305,7 @@ const Home = () => {
               ref={ remoteVideoRef }
               autoPlay
               playsInline
-              muted
+              // muted
               style={{ border: "1px solid black" }}
             />
             <div className="h-sender-vcall">
