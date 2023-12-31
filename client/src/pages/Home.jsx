@@ -39,6 +39,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const otherUserId = useSelector((state) => state.chat.otherUserId);
+  const otherUserDetails = useSelector((state) => state.chat.otherUserDetails);
 
   const [width, setWidth] = useState(window.innerWidth);
   const [infoVisible, setInfoVisible] = useState(false);
@@ -49,11 +50,16 @@ const Home = () => {
   const localVideoRef = useRef();
   const remoteVideoRef = useRef();
   const [isCalling, setIsCalling] = useState(false);
+  const [waitigForCall, setWaitingForCall] = useState(false);
+  // const [answerCall, setAnswerCall] = useState(false);
+  const [incommingCall, setInCommingCall] = useState(false);
+
+  const [incomingCallTimeout, setIncomingCallTimeout] = useState(null);
 
   useEffect(() => {
     console.log("socket", socket);
 
-    socket.on("receiveOffer", handleReceiveOffer);
+    socket.on("receiveOffer", handleReceiveOfferAccept);
     socket.on("receiveAnswer", handleReceiveAnswer);
   }, []);
 
@@ -142,6 +148,7 @@ const Home = () => {
       })
       .then((stream) => {
         console.log("stream----------------", stream);
+        setWaitingForCall(true);
 
         localVideoRef.current.srcObject = stream;
 
@@ -169,15 +176,41 @@ const Home = () => {
       });
   };
 
-  const handleReceiveOffer = (data) => {
-    console.log("receive offer", data);
-
+  const handleReceiveOfferAccept = (data) => {
     setIsCalling(true);
+    console.log("setIncoming call(true)");
+    setInCommingCall(true);
+
+    const intervalId = setInterval(() => {
+      setInCommingCall((prevValue) => {
+        if (!prevValue) {
+          console.log("enter incommingCall");
+          clearInterval(intervalId);
+          handleReceiveOffer(data);
+          return;
+        }
+        console.log("incomingCallTimeout");
+        return prevValue;
+      });
+    }, 1000);
+
+    setIncomingCallTimeout(intervalId);
+
+    setTimeout(() => {
+      console.log("clearInterval");
+      clearInterval(intervalId);
+      handleCallHangup();
+    }, 9000);
+  };
+
+  const handleReceiveOffer = (data) => {
+    console.log("going to receive");
 
     navigator.mediaDevices
-      .getUserMedia({ video: 
-        { width: { ideal: 160 }, height: { ideal: 120 }}
-        , audio: true })
+      .getUserMedia({
+        video: { width: { ideal: 160 }, height: { ideal: 120 } },
+        audio: true,
+      })
       .then((stream) => {
         localVideoRef.current.srcObject = stream;
         console.log("localVideoRef", localVideoRef);
@@ -204,41 +237,42 @@ const Home = () => {
       });
   };
 
+  useEffect(() => {
+    console.log("peer ref", peerRef.current);
+    if (peerRef.current) {
+      peerRef.current.on("close", () => {
+        console.log("peerRef.current.on close");
+        handleCallHangup();
+      });
+    }
+  }, [peerRef.current]);
+
+  //  get when peer is destroyed
+
   const handleReceiveAnswer = (data) => {
     console.log("receive answer", data);
-    peerRef.current.signal(data.answer);
+    setWaitingForCall(false);
+    peerRef.current?.signal(data.answer);
   };
 
-  // const handleClose = () => {
-  //   setIsCalling(false);
-  //   localVideoRef.current.srcObject
-  //     .getTracks()
-  //     .forEach((track) => track.stop());
-  //   remoteVideoRef.current.srcObject
-  //     .getTracks()
-  //     .forEach((track) => track.stop());
+  const handleCallHangup = () => {
+    setIsCalling(false);
+    // console.log("hanging up");
+    setInCommingCall(false);
 
-  //   peerRef.current.destroy();
-  //   peerRef.current = null;
-  // };
+    if (localVideoRef.current?.srcObject) {
+      localVideoRef.current.srcObject
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
+    if (remoteVideoRef.current?.srcObject) {
+      remoteVideoRef.current.srcObject
+        .getTracks()
+        .forEach((track) => track.stop());
+    }
 
-  useEffect(() => {
-    console.log("local stream --00--00--", localVideoRef.current.srcObject);
-    // console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
-  }, [localVideoRef.current?.srcObject]);
-
-  useEffect(() => {
-    console.log("remote stream --00--00--", remoteVideoRef.current.srcObject);
-  }, [remoteVideoRef.current?.srcObject]);
-
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     console.log("local stream --00--", localVideoRef.current.srcObject);
-  //     console.log("remote stream --00--", remoteVideoRef.current.srcObject);
-
-  //   }, 2000);
-
-  // }, []);
+    peerRef.current = null;
+  };
 
   return width < 768 ? (
     <>
@@ -306,28 +340,46 @@ const Home = () => {
       }
       <Dialog
         open={isCalling}
-        // onClose={}
         PaperComponent={PaperComponent}
         style={{
-          position: "relative",
+          position: "absolute",
         }}
         aria-labelledby="draggable-dialog-title"
       >
-        <div id="draggable-dialog-title">
+        <div id="draggable-dialog">
           <div className="h-reciever-vcall">
+            <div id="draggable-dialog-title" />
+            {waitigForCall && (
+              <div style={{ paddingTop: "100px" }}>
+                <div class="call-animation">
+                  <img
+                    class="img-circle"
+                    src={
+                      otherUserDetails?.profile_pic ||
+                      "https://i.imgur.com/6VBx3io.png"
+                    }
+                    alt=""
+                    width="100"
+                  />
+                </div>
+              </div>
+            )}
             <video
               ref={remoteVideoRef}
               autoPlay
               playsInline
-              style={{ border: "1px solid black" }}
+              style={{ display: waitigForCall ? "none" : "" }}
             />
             <div className="h-sender-vcall">
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                style={{ border: "1px solid black" }}
-              />
+              <video ref={localVideoRef} autoPlay playsInline />
+            </div>
+            <div
+              className="vcall-hangup"
+              onClick={() => {
+                handleCallHangup();
+              }}
+            >
+              End
             </div>
           </div>
         </div>
@@ -397,29 +449,59 @@ const Home = () => {
       </div>
       <Dialog
         open={isCalling}
-        // onClose={}
         PaperComponent={PaperComponent}
         style={{
-          position: "relative",
+          position: "absolute",
         }}
         aria-labelledby="draggable-dialog-title"
       >
-        <div id="draggable-dialog-title">
+        <div id="draggable-dialog">
           <div className="h-reciever-vcall">
+            <div id="draggable-dialog-title" />
+            {waitigForCall && (
+              <div style={{ paddingTop: "100px" }}>
+                <div class="call-animation">
+                  <img
+                    class="img-circle"
+                    src={
+                      otherUserDetails?.profile_pic ||
+                      "https://i.imgur.com/6VBx3io.png"
+                    }
+                    alt=""
+                    width="100"
+                  />
+                </div>
+              </div>
+            )}
             <video
               ref={remoteVideoRef}
               autoPlay
               playsInline
-              style={{ border: "1px solid black" }}
+              style={{ display: waitigForCall ? "none" : "" }}
             />
             <div className="h-sender-vcall">
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                style={{ border: "1px solid black" }}
-              />
+              <video ref={localVideoRef} autoPlay playsInline />
             </div>
+            {!incommingCall  ? (
+              <div
+                className="vcall-hangup"
+                onClick={() => {
+                  handleCallHangup();
+                }}
+              >
+                End
+              </div>
+            ) : (
+              <div
+                className="vcall-hangup"
+                onClick={() => {
+                  console.log("folseeeeee");
+                  setInCommingCall(false);
+                }}
+              >
+                Receive
+              </div>
+            )}
           </div>
         </div>
       </Dialog>

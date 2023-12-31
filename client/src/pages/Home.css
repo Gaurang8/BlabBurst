@@ -50,11 +50,20 @@
     text-align: center;
 }
 
-#draggable-dialog-title{
+#draggable-dialog{
     height: 400px;
     width: 300px;
     overflow: hidden;
-    border-radius: 3px;
+    border-radius: 5px;
+ 
+}
+#draggable-dialog-title{
+    cursor: move;
+    position: absolute;
+    width: 100%;
+    height: 300px;
+    background:transparent;
+    z-index: 10;
 }
 
 .h-reciever-vcall{
@@ -62,12 +71,12 @@
     height: 100%;
     max-width: min(90vw, 300px);
     max-height: min(90vh, 400px);
-    background-color: red;
+    background-color: rgba(255,225, 225, 0.6);
 }
 .h-reciever-vcall video{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transform: scaleX(-1);
 }
 .h-sender-vcall{
@@ -75,19 +84,32 @@
     height: 100px;
     max-width: min(90vw, 300px);
     max-height: min(90vh, 200px);
-    background-color: green;
+    background-color: #9496a3cc;
     position: absolute;
     bottom: 10px;
+    border-radius: 5px;
     right: 10px;
     z-index: 1;
+    overflow: hidden;
+    
 }
 .h-sender-vcall video{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transform: scaleX(-1);
 }
-
+.vcall-hangup{
+    position: absolute;
+    padding : 5px 15px;
+    border-radius: 15px;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffa491;
+    color: red;
+    font-weight: 600;
+}
 
 @media screen and (max-width: 1000px) {
     .home-main-aside{
@@ -101,3 +123,61 @@
        display: none;
    } 
 } */
+
+
+
+/* extra */
+
+.call-animation {
+    background: #fff;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin: 0 auto;
+    border-radius: 100%;
+    /* border: solid 5px #fff; */
+  
+}
+  .call-animation:before {
+              position: absolute;
+              content: '';
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              animation: play 3s linear infinite;
+              backface-visibility: hidden;
+              border-radius: 50%;
+            }
+.call-animation img {
+        width: 100px;
+        height: 100px;
+        border-radius: 100%;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+    }
+ @keyframes play {
+
+    0% {
+      transform: scale(1);
+    }
+    15% {
+      box-shadow: 0 0 0 5px rgba(255, 0, 0, 0.4);
+    }
+    25% {
+      box-shadow: 0 0 0 10px rgba(255, 0, 0, 0.4), 0 0 0 20px rgba(255, 0, 0, 0.2);
+    }
+    25% {
+      box-shadow: 0 0 0 15px rgba(255, 0, 0, 0.4), 0 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 0 25px rgba(255, 0, 0, 0.4), 0 0 0 50px rgba(255, 0, 0, 0.2);
+    }
+    100% {
+      box-shadow: 0 0 0 25px rgba(255, 0, 0, 0.4), 0 0 0 50px rgba(255, 0, 0, 0.2);
+      transform: scale(1.1);
+      opacity: 0;
+    }
+
+  }
