@@ -9,6 +9,8 @@ import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import Home from './pages/Home';
 
+import {SocketProvider} from './SocketContext';
+
 function App() {
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -68,6 +70,7 @@ function App() {
   return (
     <div className='main-web-div'>
       <BrowserRouter>
+        <SocketProvider>
         <Routes>
           {!isAuthenticated && (
             <>
@@ -86,6 +89,7 @@ function App() {
             </>
           )}
         </Routes>
+        </SocketProvider>
       </BrowserRouter>
     </div>
   );

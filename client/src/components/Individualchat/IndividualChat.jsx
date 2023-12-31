@@ -3,7 +3,6 @@ import Message from "../Message/Message";
 import "./Individualchat.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import { io } from "socket.io-client";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import videoCallsvg from "../../svg/video.svg";
@@ -18,7 +17,13 @@ import Peer from "simple-peer";
 
 import Modal from "@mui/material/Modal";
 
-const IndividualChat = ({ setInfoVisible }) => {
+import { useSocket } from "../../SocketContext.js";
+ 
+
+const IndividualChat = ({ setInfoVisible , startCall }) => {
+
+  const socket = useSocket();
+
   const user = useSelector((state) => state.auth.user);
   const conversationId = useSelector(
     (state) => state.chat.currentConversationId
@@ -35,27 +40,16 @@ const IndividualChat = ({ setInfoVisible }) => {
   const [userStatus, setUserStatus] = useState("offline");
   const [isCalling, setIsCalling] = useState(false);
 
-  const socket = useRef();
   const scrollRef = useRef();
-  const localVideoRef = useRef();
-  const otherUserId = otherUser;
-  const peerRef = useRef();
-  const remoteVideoRef = useRef();
 
   useEffect(() => {
-    socket.current = io("wss://bbchatbackend.onrender.com", {
-      path: "/socket.io",
-    });
-    // socket.current = io("ws://localhost:8000", {
-    //   path: "/socket.io",
-    // });
+    
 
-    console.log(socket.current);
+    console.log(socket);
 
-    socket.current.on("receiveOffer", handleReceiveOffer);
-    socket.current.on("receiveAnswer", handleReceiveAnswer);
+   
 
-    socket.current.on("getMessage", (data) => {
+    socket.on("getMessage", (data) => {
       setCommingMessage({
         sender: data.senderId,
         text: data.text,
@@ -64,19 +58,10 @@ const IndividualChat = ({ setInfoVisible }) => {
     });
   }, []);
 
-  const handleClose = () => {
-    setIsCalling(false);
-    localVideoRef.current.srcObject
-      .getTracks()
-      .forEach((track) => track.stop());
-    remoteVideoRef.current.srcObject
-      .getTracks()
-      .forEach((track) => track.stop());
-  };
 
   useEffect(() => {
     console.log("Other User:", otherUser);
-    socket.current.on("getOnlineuser", (onlineUsers) => {
+    socket.on("getOnlineuser", (onlineUsers) => {
       console.log("Online Users:", onlineUsers);
       console.log("Other User:", otherUser);
       const onlineUser = onlineUsers.find((user) => user.userId === otherUser);
@@ -84,9 +69,7 @@ const IndividualChat = ({ setInfoVisible }) => {
       setUserStatus(onlineUser ? "online" : "offline");
     });
 
-    // return () => {
-    //   socket.current.disconnect();
-    // };
+  
   }, [otherUser]);
 
   useEffect(() => {
@@ -100,12 +83,11 @@ const IndividualChat = ({ setInfoVisible }) => {
   }, [commingMessage, currentConversation]);
 
   useEffect(() => {
-    socket.current.emit("addUser", user._id);
+    socket.emit("addUser", user._id);
     console.log("User connected");
 
     return () => {
       console.log("User disconnected");
-      socket.current.disconnect();
     };
   }, [user]);
 
@@ -122,7 +104,7 @@ const IndividualChat = ({ setInfoVisible }) => {
       conversationId: conversationId,
     };
 
-    socket.current.emit("sendMessage", {
+    socket.emit("sendMessage", {
       senderId: user._id,
       receiverId: otherUser,
       text: newMessage,
@@ -179,75 +161,7 @@ const IndividualChat = ({ setInfoVisible }) => {
 
   // Video Call
 
-  const startCall = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log(stream);
-
-        localVideoRef.current.srcObject = stream;
-
-        peerRef.current = new Peer({ initiator: true, trickle: false, stream });
-
-        peerRef.current.on("signal", (data) => {
-          console.log("signal on", data);
-
-          socket.current.emit("offer", {
-            targetUserId: otherUserId,
-            offer: data,
-          });
-        });
-
-        peerRef.current.on("stream", (remoteStream) => {
-          console.log("Received remote stream:", remoteStream);
-          remoteVideoRef.current.srcObject = remoteStream;
-        });
-
-        setIsCalling(true);
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
-  };
-
-  const handleReceiveOffer = (data) => {
-    console.log("receive offer", data);
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        localVideoRef.current.srcObject = stream;
-
-        peerRef.current = new Peer({ trickle: false, stream });
-
-        setIsCalling(true);
-
-        peerRef.current.on("signal", (answer) => {
-          console.log("signal on answer", answer);
-          socket.current.emit("answer", {
-            targetUserId: data.senderId,
-            answer,
-          });
-        });
-
-        peerRef.current.on("stream", (remoteStream) => {
-          remoteVideoRef.current.srcObject = remoteStream;
-        });
-
-        peerRef.current.signal(data.offer);
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
-  };
-
-  const handleReceiveAnswer = (data) => {
-    console.log("receive answer", data);
-    peerRef.current.signal(data.answer);
-    remoteVideoRef.current.srcObject = peerRef.current.remoteStream;
-    console.log("remote stream", peerRef.current.remoteStream);
-  };
-
+  
   return (
     <div className="">
       <div className="IC-user-info">
@@ -287,7 +201,7 @@ const IndividualChat = ({ setInfoVisible }) => {
             sx={{
               padding: "0px",
             }}
-            onClick={startCall}
+            onClick={()=>{startCall(otherUser)}}
           >
             <img
               className="IC-user-img"
@@ -298,33 +212,6 @@ const IndividualChat = ({ setInfoVisible }) => {
             />
           </IconButton>
         </div>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        className={!isCalling ? 'ss-ss-hidden': null}
-      >
-        <video
-          ref={localVideoRef}
-          autoPlay
-          playsInline
-          muted
-          width={"200px"}
-          height={"200px"}
-          style={{ border: "1px solid black" }}
-        />
-        <video
-          ref={remoteVideoRef}
-          autoPlay
-          playsInline
-          width={"200px"}
-          height={"200px"}
-          style={{ border: "1px solid black" }}
-        />
       </div>
 
       {!isCalling && (
@@ -365,35 +252,6 @@ const IndividualChat = ({ setInfoVisible }) => {
           </div>
         </div>
       </form>
-      {/* <Modal
-        open={isCalling}
-        onClose={handleClose}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ background: "white" , display:"flex" , flexDirection:"column" }}>
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            muted
-            width={"200px"}
-            height={"200px"}
-            style={{ border: "1px solid black" }}
-          />
-          <video
-            ref={remoteVideoRef}
-            autoPlay
-            playsInline
-            width={"200px"}
-            height={"200px"}
-            style={{ border: "1px solid black" }}
-          />
-        </div>
-      </Modal> */}
     </div>
   );
 };
