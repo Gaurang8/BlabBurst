@@ -143,17 +143,7 @@
 }
 
 
-@media screen and (max-width : 768px) {
-    .IC-container{
-        margin-top: 60px;
-        max-height: calc(100vh - 120px);
-    }
-    .IC-user-info{
-        position: absolute;
-        width: 100%;
-    }
-    
-}
+
 
 /*  */
 .ss-ss-hidden{
