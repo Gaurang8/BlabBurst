@@ -375,7 +375,7 @@ const Home = () => {
               style={{ display: waitigForCall ? "none" : "" }}
             />
             <div className="h-sender-vcall">
-              <video ref={localVideoRef} autoPlay playsInline />
+              <video ref={localVideoRef} autoPlay playsInline muted />
             </div>
             {!incommingCall  ? (
               <div
@@ -496,7 +496,7 @@ const Home = () => {
               style={{ display: waitigForCall ? "none" : "" }}
             />
             <div className="h-sender-vcall">
-              <video ref={localVideoRef} autoPlay playsInline />
+              <video ref={localVideoRef} autoPlay playsInline muted />
             </div>
             {!incommingCall  ? (
               <div
