@@ -14,8 +14,8 @@ export default function Message({ message, own }) {
           className="messageImg"
           src={
             own 
-              ? ( user?.profilePicture || "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" )
-              : ( otherUserDetails?.profilePicture || "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" )
+              ? ( user?.profile_pic || "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" )
+              : ( otherUserDetails?.profile_pic || "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" )
           
           }
           alt=""
